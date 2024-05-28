@@ -52,3 +52,35 @@ export const create = async (req, res, next) => {
     return res.status(500).json({ code: 500, error: error });
   }
 };
+export const getAll = async (req,res,next) => {
+  try {
+      let results = await Food.find()
+
+      // Thêm header Cache-Control vào phản hồi
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  
+      return res.send({ code: 200, payload: results });
+      
+    } catch (err) {
+      return res.status(500).json({ code: 500, error: err });
+    }
+};
+
+export const getDetail = async (req, res, next)=>{
+  try {
+      const { id } = req.params;
+  
+      let found = await Food.findById(id)
+  
+      if (found) {
+        return res.send({ code: 200, payload: found });
+      }
+  
+      return res.status(410).send({ code: 404, message: 'Không tìm thấy' });
+    } catch (err) {
+      res.status(404).json({
+        message: 'Get detail fail!!',
+        payload: err,
+      });
+    }
+}

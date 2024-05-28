@@ -13,6 +13,9 @@ passport.use(passportConfigAccount);
 passport.use(passportConfigLocalAccount);
 
 //routes
+//   router.get("/admin-auth", allowRoles, (req, res) => {
+//     res.status(200).send({ok:true});
+//   });
 router.post('/register', registerAccount);
 router.post('/login',passport.authenticate('localAdmin', { session: false }),loginAccount)
 router.post('/:accountId/creatMember',passport.authenticate('jwtAdmin', { session: false }),createMember)
