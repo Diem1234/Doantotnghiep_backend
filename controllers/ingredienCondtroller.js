@@ -1,5 +1,6 @@
+import { Supplier } from "../models/Supplier.js";
 import { Ingredient } from "../models/ingredient.js";
-import { Supplier } from "../models/supplier.js";
+
 
 export const create = async (req, res, next) => {
   try {
