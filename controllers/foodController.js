@@ -84,3 +84,33 @@ export const getDetail = async (req, res, next)=>{
       });
     }
 }
+
+export const getDetails = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const food = await Food.findById(id)
+      .populate('foodIngredient.ingredientId')
+      .populate('categoryId');
+
+    if (food) {
+      const foodWithDetails = {
+        ...food.toObject(),
+        foodIngredient: food.foodIngredient.map(ingredient => ({
+          ...ingredient.toObject(),
+          ingredientName: ingredient.ingredientId.name
+        })),
+        categoryName: food.categoryId.name
+      };
+
+      return res.status(200).json({ code: 200, payload: foodWithDetails });
+    }
+
+    return res.status(404).json({ code: 404, message: 'Không tìm thấy' });
+  } catch (err) {
+    return res.status(500).json({
+      message: 'Get detail fail!!',
+      payload: err.message
+    });
+  }
+};
