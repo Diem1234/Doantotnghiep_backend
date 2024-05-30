@@ -1,6 +1,6 @@
 import { Category } from "../models/Category.js";
 import { Food } from "../models/Food.js";
-import { Ingredient } from "../models/ingredient.js";
+import { Ingredient } from "../models/Ingredient.js";
 // import { asyncForEach } from '../utils/index.js';
 import {asyncForEach} from "../utils/index.js";
 export const create = async (req, res, next) => {
