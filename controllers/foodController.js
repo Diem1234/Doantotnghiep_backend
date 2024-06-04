@@ -114,3 +114,59 @@ export const getDetails = async (req, res, next) => {
     });
   }
 };
+export const updateIsDelete = async (req, res, next) => {
+  const { selectedIds } = req.body; // Lấy danh sách các ID từ yêu cầu
+
+  try {
+    // Thực hiện cập nhật cho từng ID trong danh sách
+    const result = await Food.updateMany(
+      { _id: { $in: selectedIds } }, // Tìm các sản phẩm có ID trong danh sách
+      { $set: { isDelete: true } } // Cập nhật trường isDelete thành true
+    );
+
+    res.status(200).json({ message: 'Cập nhật thành công',success: true, payload: result });
+  } catch (error) {
+    res.status(500).json({ error: 'Đã xảy ra lỗi trong quá trình cập nhật' });
+  }
+};
+export const deleteFoood = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    let found = await Food.findByIdAndDelete(id);
+
+    if (found) {
+      return res.send({ code: 200,success:true, payload: found, message: 'Xóa thành công' });
+    }
+
+    return res.status(410).send({ code: 404, message: 'Không tìm thấy' });
+  } catch (err) {
+    return res.status(500).json({ code: 500, error: err });
+  }
+};
+export const foodSearch = async (req, res, next) => {
+  try {
+    const { name } = req.query;
+    const conditionFind = {
+      name: { $regex: new RegExp(`${name}`), $options: "i" },
+    };
+    let results = await Food.find(conditionFind)
+      .populate({
+        path: "category",
+        select: "name", // Chỉ lấy trường "name" từ bảng "category"
+      })
+      .populate("supplier");
+
+    // Đối chiếu mã danh mục và hiển thị tên danh mục
+    results = results.map((food) => {
+      const category = food.category ? food.category.name : "";
+      return { ...food._doc, category };
+    });
+
+    return res.send({ code: 200, payload: results });
+  } catch (err) {
+    console.log("««««« err »»»»»", err);
+    return res.status(500).json({ code: 500, error: err });
+  }
+};
+
