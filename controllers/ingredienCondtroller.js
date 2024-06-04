@@ -106,4 +106,43 @@ export const update = async (req, res, next)=>{
   } catch (error) {
     return res.status(500).json({ code: 500, error: err });
   }
-}
+};
+export const ingredientSearch = async (req, res, next) => {
+  try {
+    const { name } = req.query;
+    const conditionFind = {
+      name: { $regex: new RegExp(`${name}`), $options: "i" },
+    };
+    let results = await Ingredient.find(conditionFind)
+      .populate({
+        path: "supplier",
+        select: "name", // Chỉ lấy trường "name" từ bảng "category"
+      })
+  
+    // Đối chiếu mã danh mục và hiển thị tên danh mục
+    results = results.map((ingredient) => {
+      const supplier = ingredient.supplier ? ingredient.supplier.name : "";
+      return { ...ingredient._doc, supplier };
+    });
+
+      res.send({ code: 200, payload: results });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Đã xảy ra lỗi' });
+  }
+};
+export const deleteIngredient = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    let found = await Ingredient.findByIdAndDelete(id);
+
+    if (found) {
+      return res.send({ code: 200,success:true, payload: found, message: 'Xóa thành công' });
+    }
+
+    return res.status(410).send({ code: 404, message: 'Không tìm thấy' });
+  } catch (err) {
+    return res.status(500).json({ code: 500, error: err });
+  }
+};
