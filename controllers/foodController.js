@@ -155,18 +155,17 @@ export const foodSearch = async (req, res, next) => {
         path: "category",
         select: "name", // Chỉ lấy trường "name" từ bảng "category"
       })
-      .populate("supplier");
-
+  
     // Đối chiếu mã danh mục và hiển thị tên danh mục
-    results = results.map((food) => {
-      const category = food.category ? food.category.name : "";
-      return { ...food._doc, category };
+    results = results.map((product) => {
+      const category = product.category ? product.category.name : "";
+      return { ...product._doc, category };
     });
 
-    return res.send({ code: 200, payload: results });
+      res.send({ code: 200, payload: results });
   } catch (err) {
-    console.log("««««« err »»»»»", err);
-    return res.status(500).json({ code: 500, error: err });
+    console.error(err);
+    res.status(500).json({ message: 'Đã xảy ra lỗi' });
   }
 };
 

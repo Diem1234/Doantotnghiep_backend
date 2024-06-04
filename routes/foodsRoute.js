@@ -20,6 +20,6 @@ router.get('/:id',getDetail)
 router.get('/detail/:id',getDetails)
 router.delete('/:id',deleteFoood)
 router.post('/delete',allowRoles('IsDelete'),updateIsDelete);
-router.get('/foodSearch',foodSearch);
+router.get('/foods/search',foodSearch);
 
 export default router
