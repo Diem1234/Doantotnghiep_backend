@@ -169,3 +169,28 @@ export const foodSearch = async (req, res, next) => {
   }
 };
 
+
+//similar product
+export const relatedProductController = async (req,res,next) =>{
+  try {
+      const {pid,cid} = req.params;
+      const foods = await Food
+          .find({
+              categoryId: cid,
+              _id: {$ne: pid}
+          })
+          .limit(4)
+          .populate("category");
+      res.status(200).send({
+          success: true,
+          payload: foods,
+      });    
+  } catch (error) {
+      console.log(error);
+      res.status(400).send({
+          success: false,
+          message: 'Error while getting related food',
+          error
+      });
+  }
+};

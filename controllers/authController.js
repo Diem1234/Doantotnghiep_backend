@@ -83,8 +83,8 @@ export const createMember = async(req,res,next) =>{
     console.log('Lỗi:', error);
     return res.status(500).json({ error: 'Đã xảy ra lỗi khi thêm thành viên vào tài khoản' });
   }
-
 };
+
 export const getAll = async (req,res,next) => {
   try {
       let results = await Account.find()

@@ -19,7 +19,7 @@ passport.use(passportConfigLocalAccount);
 //     res.status(200).send({ok:true});
 //   });
 router.post('/register', registerAccount);
-router.post('/login',passport.authenticate('localAdmin', { session: false }),loginAccount)
+router.post('/login',passport.authenticate('localAdmin', { session: true }),loginAccount)
 router.post('/:accountId/creatMember',passport.authenticate('jwtAdmin', { session: false }),createMember)
 router.get('/',passport.authenticate('jwtAdmin', { session: false }),allowRoles('Get-all'),getAll)
 router.get('/:id',passport.authenticate('jwtAdmin', { session: false }),getDetail)
