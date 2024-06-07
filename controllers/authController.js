@@ -1,5 +1,6 @@
 
 
+import { hashPassword } from "../helpers/authHelper.js";
 import { generateRefreshToken, generateToken } from "../helpers/jwtHelper.js";
 import { Account } from "../models/Account.js";
 
@@ -116,4 +117,42 @@ export const getDetail = async (req, res, next)=>{
         payload: err,
       });
     }
+};
+
+export const getMe = async (req, res, next)=>{
+  try {
+    res.status(200).json({
+      payload: req.user,
+    });
+  } catch (err) {
+    res.sendStatus(500);
+  }
+};
+export const updateProfileController = async (req, res, next)=>{
+  try {
+    const {email,password} = req.body;
+    const employee = await Account.findById(req.params._id)
+    //password
+    if(password && password.length <6){
+      return res.json({error: 'Password is required and 6 character long'})
+    };
+    const hashedPassword = password ? await hashPassword(password) : undefined;
+    const updatedUser = await Account.findByIdAndUpdate(req.user._id,{
+      password: hashedPassword || employee.password,
+    },{new:true});
+    res.status(200).send(
+      {
+        success: true,
+        message: 'Profile updated successfuly',
+        updatedUser,
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: 'Error while update profile',
+      error
+    })
+  }
 };

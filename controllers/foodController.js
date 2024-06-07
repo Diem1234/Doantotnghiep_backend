@@ -194,3 +194,25 @@ export const relatedProductController = async (req,res,next) =>{
       });
   }
 };
+
+export const foodFilterController =  async (req,res) =>{
+  try {
+      const {checked,radio} = req.body;
+      let args = {};
+      if(checked.length > 0) args.categoryId= checked;
+      if(radio.length) args.price = {$gte: radio[0],$lte:radio[1]};
+      const products = await Food.find(args);
+      res.status(200).send({
+          success: true,
+          payload: products
+      });
+  } catch (error) {
+      console.log(error);
+      res.status(400).send({
+          success: false,
+          message: 'Error while Filtering product',
+          error
+      });
+      
+  }
+};
