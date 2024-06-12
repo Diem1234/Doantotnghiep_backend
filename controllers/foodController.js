@@ -216,3 +216,18 @@ export const foodFilterController =  async (req,res) =>{
       
   }
 };
+// API endpoint to get foods by categoryId
+export const getFoodsByCategoryId = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    const foods = await Food.find({ categoryId })
+      .populate('category')
+      .populate('foodIngredient.ingredient')
+      .lean({ virtuals: true });
+
+    res.status(200).json({success: true, payload: foods});
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
