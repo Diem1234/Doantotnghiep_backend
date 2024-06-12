@@ -1,6 +1,7 @@
 import { Category } from "../models/Category.js";
 import { Food } from "../models/Food.js";
 import { Ingredient } from "../models/Ingredient.js";
+import mongoose from "mongoose";
 // import { asyncForEach } from '../utils/index.js';
 import {asyncForEach} from "../utils/index.js";
 export const create = async (req, res, next) => {
@@ -229,5 +230,72 @@ export const getFoodsByCategoryId = async (req, res) => {
     res.status(200).json({success: true, payload: foods});
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+export const update = async (req, res, next)=>{
+  try {
+    const { name, description, price ,discount, foodIngredient, categoryId } = req.body;
+
+    // Validate input
+    if (name.length > 50) {
+      return res.status(400).json({ message: 'Tên sản phẩm không được vượt quá 50 ký tự' });
+    }
+    if (description.length > 500) {
+      return res.status(400).json({ message: 'Mô tả sản phẩm không được vượt quá 500 ký tự' });
+    }
+    if (price < 0) {
+      return res.status(400).json({ message: 'Giá không được nhỏ hơn 0' });
+    }
+    if (discount < 0 || discount > 75) {
+      return res.status(400).json({ message: 'Chiết khấu phải nằm trong khoảng 0 - 75%' });
+    }
+
+    // Check if category exists and is not deleted
+    const category = await Category.findById(categoryId);
+    if (!category || category.isDelete) {
+      return res.status(400).json({ message: 'Danh mục không tồn tại' });
+    }
+
+    // Start a transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const food = await Food.findByIdAndUpdate(
+        req.params.id,
+        { name, description, price ,discount, foodIngredient, categoryId },
+        { new: true, runValidators: true, session }
+      );
+
+      if (!food) {
+        return res.status(404).json({ message: 'Không tìm thấy món ăn' });
+      }
+
+      // Update foodIngredient
+      await Food.updateMany(
+        { _id: food._id },
+        { $set: { 'foodIngredient.$[].quantity': 0 } },
+        { session }
+      );
+
+      for (const ingredient of foodIngredient) {
+        await Food.updateOne(
+          { _id: food._id, 'foodIngredient.ingredientId': ingredient.ingredientId },
+          { $set: { 'foodIngredient.$.quantity': ingredient.quantity } },
+          { session }
+        );
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+
+      res.status(200).json({success: true, payload: food});
+    } catch (err) {
+      await session.abortTransaction();
+      session.endSession();
+      next(err);
+    }
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };

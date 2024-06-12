@@ -3,7 +3,7 @@ import express from "express";
 import { passportConfigAccount, passportConfigLocalAccount } from "../middlewares/passportAdmin.js";
 import passport from "passport";
 import allowRoles from "../middlewares/checkRole.js";
-import { create, deleteFoood, foodFilterController, foodSearch, getAll, getDetail, getDetails, getFoodsByCategoryId, relatedProductController, updateIsDelete } from "../controllers/foodController.js";
+import { create, deleteFoood, foodFilterController, foodSearch, getAll, getDetail, getDetails, getFoodsByCategoryId, relatedProductController, update, updateIsDelete } from "../controllers/foodController.js";
 
 
 
@@ -20,6 +20,7 @@ router.get('/:id',getDetail)
 router.get('/detail/:id',getDetails)
 router.delete('/:id',deleteFoood)
 router.post('/delete',allowRoles('IsDelete'),updateIsDelete);
+router.patch('/:id',allowRoles('Update-food'),update);
 router.get('/foods/search',foodSearch);
 router.get('/related-product/:pid/:cid', relatedProductController);
 router.post('/food-filters', foodFilterController);
