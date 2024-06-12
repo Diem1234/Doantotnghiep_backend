@@ -1,5 +1,5 @@
 import express from "express";
-import { loginAccount, registerAccount,createMember, getAll, getDetail, getMe, updateProfileController, addFamilyMembers } from "../controllers/authController.js";
+import { loginAccount, registerAccount,createMember, getAll, getDetail, getMe, updateProfileController, addFamilyMembers, memberSearch, memberStatusTwo, memberStatusFilter } from "../controllers/authController.js";
 import { passportConfigAccount, passportConfigLocalAccount } from "../middlewares/passportAdmin.js";
 import passport from "passport";
 
@@ -22,10 +22,14 @@ router.post('/register', registerAccount);
 router.post('/login'
             //  ,passport.authenticate('localAdmin', { session: false })
             ,loginAccount)
-router.put('/:accountId/creatMember',passport.authenticate('jwtAdmin', { session: false }),createMember)
+router.post('/:accountId/creatMember',passport.authenticate('jwtAdmin', { session: false }),createMember)
 router.get('/',passport.authenticate('jwtAdmin', { session: false }),allowRoles('Get-all'),getAll)
 router.get('/:id',passport.authenticate('jwtAdmin', { session: false }),getDetail)
 
 router.get('/profile',passport.authenticate('jwtAdmin', { session: false }), getMe)
-router.put('/profile',passport.authenticate('jwtAdmin', { session: false }), addFamilyMembers)
+// router.put('/profile',passport.authenticate('jwtAdmin', { session: false }), addFamilyMembers)
+router.get('/member/search',memberSearch);
+router.get('/member/status-filter',memberStatusFilter);
+
+
 export default router

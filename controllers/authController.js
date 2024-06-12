@@ -179,3 +179,62 @@ export const updateProfileController = async (req, res, next)=>{
     })
   }
 };
+export const memberSearch = async (req, res, next) => {
+  try {
+    const { name } = req.query;
+    const conditionFind = {
+      'familyMembers.name': { $regex: new RegExp(`${name || ''}`, 'i') }
+    };
+
+    const results = await Account.find(conditionFind, {
+      _id: 1,
+      'familyMembers': {
+        $filter: {
+          input: '$familyMembers',
+          as: 'member',
+          cond: { $regexMatch: { $toString: '$$member.name' }, $regex: new RegExp(`${name || ''}`, 'i') }
+        }
+      }
+    })
+    .lean();
+
+    res.send({ code: 200, payload: results });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'An error occurred' });
+  }
+};
+export const memberStatusFilter = async (req, res, next) => {
+  try {
+    const { status } = req.query;
+
+    const accounts = await Account.find({
+      'familyMembers.status': status
+    }, {
+      'familyMembers.$': 1
+    });
+
+    const membersWithStatus = accounts.flatMap(account => account.familyMembers.filter(member => member.status === status));
+    const membersWithStatusCount = membersWithStatus.length;
+
+    res.send({ code: 200, count: membersWithStatusCount, payload: membersWithStatus });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const memberStatusTwo = async (req, res, next) => {
+  try {
+    const accounts = await Account.find({
+      'familyMembers.status': { $ne: 'Bình Thường' }
+    }, {
+      'familyMembers.$': 1
+    });
+
+    const membersWithAbnormalStatus = accounts.flatMap(account => account.familyMembers.filter(member => member.status !== 'Bình Thường'));
+
+    res.json(membersWithAbnormalStatus);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
