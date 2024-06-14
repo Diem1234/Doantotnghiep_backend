@@ -1,5 +1,5 @@
 import express from "express";
-import { loginAccount, registerAccount,createMember, getAll, getDetail, getMe, updateProfileController, addFamilyMembers, memberSearch, memberStatusTwo, memberStatusFilter } from "../controllers/authController.js";
+import { loginAccount, registerAccount,createMember, getAll, getDetail, getMe, updateProfileController, addFamilyMembers, memberSearch, memberStatusTwo, memberStatusFilter, deleteFamilyMember, updateFamilyMember } from "../controllers/authController.js";
 import { passportConfigAccount, passportConfigLocalAccount } from "../middlewares/passportAdmin.js";
 import passport from "passport";
 
@@ -30,6 +30,9 @@ router.get('/profile',passport.authenticate('jwtAdmin', { session: false }), get
 // router.put('/profile',passport.authenticate('jwtAdmin', { session: false }), addFamilyMembers)
 router.get('/member/search',memberSearch);
 router.get('/member/status-filter',memberStatusFilter);
-
+// delete member
+router.delete('/accounts/:accountId/family-members/:familyMemberId', deleteFamilyMember);
+// Route cập nhật family member
+router.put('/accounts/:accountId/family-members/:familyMemberId', updateFamilyMember);
 
 export default router

@@ -238,3 +238,64 @@ export const memberStatusTwo = async (req, res, next) => {
     res.status(500).json({ message: error.message });
   }
 };
+//delete member
+export const deleteFamilyMember = async (req, res) => {
+  try {
+    const { accountId, familyMemberId } = req.params;
+
+    // Find the account
+    const account = await Account.findById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: 'Account not found' });
+    }
+
+    // Find the family member in the account
+    const familyMember = account.familyMembers.id(familyMemberId);
+    if (!familyMember) {
+      return res.status(404).json({ message: 'Family member not found' });
+    }
+
+    // Remove the family member from the account
+    account.familyMembers.pull(familyMember);
+    await account.save();
+
+    return res.status(200).json({ message: 'Family member deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred while deleting the family member' });
+  }
+};
+export const updateFamilyMember = async (req, res) => {
+  try {
+    const { accountId, familyMemberId } = req.params;
+    const { name, gender, status, age, trend, phone } = req.body;
+
+    // Tìm account
+    const account = await Account.findById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: 'Không tìm thấy account' });
+    }
+
+    // Tìm vị trí của family member trong mảng familyMembers
+    const index = account.familyMembers.findIndex(member => member._id.toString() === familyMemberId);
+    if (index === -1) {
+      return res.status(404).json({ message: 'Không tìm thấy family member' });
+    }
+
+    // Update thông tin của family member
+    account.familyMembers[index].name = name;
+    account.familyMembers[index].gender = gender;
+    account.familyMembers[index].status = status;
+    account.familyMembers[index].age = age;
+    account.familyMembers[index].trend = trend;
+    account.familyMembers[index].phone = phone;
+
+    // Lưu lại account
+    await account.save();
+
+    return res.status(200).json({ message: 'Cập nhật family member thành công',payload: account.familyMembers[index] });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật family member' });
+  }
+};
