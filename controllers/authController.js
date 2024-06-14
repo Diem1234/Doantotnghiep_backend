@@ -291,9 +291,9 @@ export const updateFamilyMember = async (req, res) => {
     account.familyMembers[index].phone = phone;
 
     // Lưu lại account
-    await account.save();
+    const updatedAccount = await account.save();
 
-    return res.status(200).json({ message: 'Cập nhật family member thành công',payload: account.familyMembers[index] });
+    return res.status(200).json({ message: 'Cập nhật family member thành công',payload: account.familyMembers[index]});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật family member' });
