@@ -43,7 +43,7 @@ const foodSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      maxLength: [500, "Mô tả sản phẩm không được vượt quá 500 ký tự"],
+      maxLength: [100000, "Mô tả sản phẩm không được vượt quá 100000 ký tự"],
     },
     price: {
       type: Number,
