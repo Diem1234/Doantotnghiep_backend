@@ -1,5 +1,5 @@
 import express from "express";
-import { loginAccount, registerAccount,createMember, getAll, getDetail, getMe, updateProfileController, addFamilyMembers, memberSearch, memberStatusTwo, memberStatusFilter, deleteFamilyMember, updateFamilyMember } from "../controllers/authController.js";
+import { loginAccount, registerAccount,createMember, getAll, getDetail, getMe, updateProfileController, addFamilyMembers, memberSearch, memberStatusTwo, memberStatusFilter, deleteFamilyMember, updateFamilyMember, getSuggest } from "../controllers/authController.js";
 import { passportConfigAccount, passportConfigLocalAccount } from "../middlewares/passportAdmin.js";
 import passport from "passport";
 
@@ -35,4 +35,5 @@ router.delete('/accounts/:accountId/family-members/:familyMemberId', deleteFamil
 // Route cập nhật family member
 router.put('/accounts/:accountId/family-members/:familyMemberId', updateFamilyMember);
 
+router.get('/accounts/:accountId/get-suggest/:familyMemberId',getSuggest)
 export default router

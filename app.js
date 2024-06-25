@@ -19,6 +19,7 @@ dotenv.config();
 
 const app = express();
 
+
 passport.use('jwtAdmin',passportConfigAccount);
 passport.use('localAdmin',passportConfigLocalAccount);
 

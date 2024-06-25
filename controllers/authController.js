@@ -1,9 +1,10 @@
 
-
+import axios from "axios";
 import { hashPassword } from "../helpers/authHelper.js";
 import { generateRefreshToken, generateToken } from "../helpers/jwtHelper.js";
 import { Account } from "../models/Account.js";
-
+import { Food } from "../models/Food.js";
+import https from 'https';
 
 // Endpoint for registering an account
 export const registerAccount = async (req, res) => {
@@ -299,3 +300,62 @@ export const updateFamilyMember = async (req, res) => {
     return res.status(500).json({ message: 'Đã xảy ra lỗi khi cập nhật family member' });
   }
 };
+
+export const getSuggest = async (req, res, next) => {
+  try {
+    const { accountId, familyMemberId } = req.params;
+
+    // Tìm account
+    const account = await Account.findById(accountId);
+    if (!account) {
+      return res.status(404).json({ message: 'Không tìm thấy account' });
+    }
+    
+    // Tìm vị trí của family member trong mảng familyMembers
+    const index = account.familyMembers.findIndex(member => member._id.toString() === familyMemberId);
+    if (index === -1) {
+      return res.status(404).json({ message: 'Không tìm thấy family member' });
+    }
+    
+    // Truy xuất thông tin của thành viên gia đình
+    const familyMember = account.familyMembers[index];
+    
+    const apiParams = {
+      tinhtrang: familyMember.status,
+      gioitinh: familyMember.gender,
+      xuhuong: familyMember.trend
+    };
+    const apiResponse = await axios.get('https://localhost:44327/api/Service', { params: apiParams, httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      })}
+      
+      // Bỏ qua xác minh SSL nếu cần thiết (không khuyến khích cho môi trường sản xuất)
+      
+    );
+    const data = apiResponse.data;
+    console.log('API response data:', apiResponse.data);
+    // Lấy danh sách món ăn khớp
+    // Kiểm tra xem data có phải là một mảng hay không
+let dishIds;
+if (Array.isArray(data)) {
+  dishIds = data;
+} else {
+  dishIds = [data];
+}
+
+// Tìm các món ăn khớp
+const matchedDishes = await Food.find({
+  _id: { $in: dishIds }
+});
+    
+    res.status(200).json({
+      success: true,
+      payload: matchedDishes
+    });
+  } catch (error) {
+    console.error('Error calling API:', error.message);
+    return res.status(500).json({ message: 'Đã xảy ra lỗi khi call api' });
+  }
+};
+
+
