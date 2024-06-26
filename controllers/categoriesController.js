@@ -3,12 +3,18 @@ import { Category } from "../models/Category.js";
 export const create = async (req, res, next) =>{
     try 
     {
-        const data = req.body;
+      const { name } = req.body;
+      const photoUrl = req.file ? req.file.path : null;
+      console.log('img',photoUrl)
+      const newCategory = await Category.create({
+        name,
+        photo: photoUrl
+      });
+    
+        let result = await newCategory.save();
+            // Lấy danh sách categories mới nhất
+        
 
-        const newItem = new Category(data);
-    
-        let result = await newItem.save();
-    
         return res.send({ code: 200,success: true , message: 'Tạo thành công', payload: result });
     } 
     catch (error) 

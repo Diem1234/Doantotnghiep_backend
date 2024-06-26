@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import {asyncForEach} from "../utils/index.js";
 export const create = async (req, res, next) => {
   try {
-    const data = req.body;
+    const data = { ...req.body, photo: req.file ? req.file.path : null };
     const { categoryId, foodIngredient } = data;
 
     const getCategory = Category.findById(categoryId);

@@ -14,11 +14,11 @@ import { passportConfigAccount, passportConfigLocalAccount } from "./middlewares
 import passport from "passport";
 
 
+
 dotenv.config();
 
 
 const app = express();
-
 
 passport.use('jwtAdmin',passportConfigAccount);
 passport.use('localAdmin',passportConfigLocalAccount);
@@ -38,6 +38,7 @@ app.use("/api/v1/categories", passport.authenticate('jwtAdmin', { session: false
 app.use("/api/v1/ingredient", passport.authenticate('jwtAdmin', { session: false }), ingredientRoute );
 app.use("/api/v1/food", passport.authenticate('jwtAdmin', { session: false }), foodsRoute );
 app.use("/api/v1/revervation",reservationRouter);
+
 app.get("/", (req, res, next)=>{return res.status(200).json({
   success: true,
   message: "HELLO WORLD AGAIN"
