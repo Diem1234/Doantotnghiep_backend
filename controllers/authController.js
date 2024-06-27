@@ -371,7 +371,7 @@ export const getSuggest = async (req, res, next) => {
       // Bỏ qua xác minh SSL nếu cần thiết (không khuyến khích cho môi trường sản xuất)
     );
     const data = apiResponse.data;
-    console.log("API response data:", data);
+  
     
     const dishIds = Array.isArray(data) ? data : data.length > 0 ? data.split(',').map(id => id.trim()) : [];
     console.log("Dish IDs:", dishIds);
@@ -383,7 +383,7 @@ export const getSuggest = async (req, res, next) => {
       })
     );
     
-    console.log('Matched dishes:', matchedDishes.filter(dish => dish !== null));
+   // console.log('Matched dishes:', matchedDishes.filter(dish => dish !== null));
 
     res.status(200).json({
       success: true,

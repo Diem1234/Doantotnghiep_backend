@@ -55,7 +55,7 @@ export const create = async (req, res, next) => {
 };
 export const getAll = async (req,res,next) => {
   try {
-      let results = await Food.find()
+      let results = await Food.find({}).sort({ createdAt: -1 }).populate('category');
 
       // Thêm header Cache-Control vào phản hồi
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -240,8 +240,8 @@ export const update = async (req, res, next)=>{
     if (name.length > 50) {
       return res.status(400).json({ message: 'Tên sản phẩm không được vượt quá 50 ký tự' });
     }
-    if (description.length > 500) {
-      return res.status(400).json({ message: 'Mô tả sản phẩm không được vượt quá 500 ký tự' });
+    if (description.length > 10000) {
+      return res.status(400).json({ message: 'Mô tả sản phẩm không được vượt quá 10000 ký tự' });
     }
     if (price < 0) {
       return res.status(400).json({ message: 'Giá không được nhỏ hơn 0' });

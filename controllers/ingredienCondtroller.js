@@ -38,7 +38,7 @@ export const create = async (req, res, next) => {
 };
 export const getAll = async (req,res,next) => {
   try {
-      let results = await Ingredient.find()
+      let results = await Ingredient.find().sort({ date_add: -1 })
 
       // Thêm header Cache-Control vào phản hồi
       res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
