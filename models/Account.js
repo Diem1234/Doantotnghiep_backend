@@ -24,7 +24,7 @@ const familyMemberSchema = new mongoose.Schema(
     },
     trend: {
       type: String,
-      enum: ['Giảm cân', 'Tăng cân', 'Bình thường'],
+      enum: ['Giảm cân', 'Tăng cân', 'Bình thường','Giữ cân'],
       default: 'Bình thường',
     },
     phone: {
