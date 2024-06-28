@@ -232,6 +232,31 @@ export const getFoodsByCategoryId = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+export const getFoods = async (req, res) => {
+  try {
+    const { checked = [], radio = [] } = req.body;
+    const { categoryId } = req.params;
+
+    let args = {};
+    if (checked.length > 0) args.categoryId = checked;
+    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+
+    if (categoryId) {
+      const foods = await Food.find({ categoryId })
+        .populate('category')
+        .populate('foodIngredient.ingredient')
+        .lean({ virtuals: true });
+      res.status(200).json({ success: true, payload: foods });
+    } else {
+      const products = await Food.find(args);
+      res.status(200).json({ success: true, payload: products });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ success: false, message: 'Error while getting foods', error });
+  }
+};
+
 export const update = async (req, res, next)=>{
   try {
     const { name, description, price ,discount, foodIngredient, categoryId } = req.body;

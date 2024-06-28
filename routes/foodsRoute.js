@@ -3,7 +3,7 @@ import express from "express";
 import { passportConfigAccount, passportConfigLocalAccount } from "../middlewares/passportAdmin.js";
 import passport from "passport";
 import allowRoles from "../middlewares/checkRole.js";
-import { create, deleteFoood, foodFilterController, foodSearch, getAll, getDetail, getDetails, getFoodsByCategoryId, relatedProductController, update, updateIsDelete } from "../controllers/foodController.js";
+import { create, deleteFoood, foodFilterController, foodSearch, getAll, getDetail, getDetails, getFoods, getFoodsByCategoryId, relatedProductController, update, updateIsDelete } from "../controllers/foodController.js";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 import { v2 as cloudinary } from 'cloudinary';
@@ -50,6 +50,6 @@ router.get('/foods/search',foodSearch);
 router.get('/related-product/:pid/:cid', relatedProductController);
 router.post('/food-filters', foodFilterController);
 router.get('/foods/category/:categoryId', getFoodsByCategoryId);
-
+router.get('/foods/cate/:categoryId?', getFoods);
 
 export default router
