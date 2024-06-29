@@ -50,6 +50,6 @@ router.get('/foods/search',foodSearch);
 router.get('/related-product/:pid/:cid', relatedProductController);
 router.post('/food-filters', foodFilterController);
 router.get('/foods/category/:categoryId', getFoodsByCategoryId);
-router.get('/foods/cate/:categoryId?', getFoods);
+router.post('/foods/cate/:categoryId?', getFoods);
 
 export default router

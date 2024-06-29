@@ -234,8 +234,7 @@ export const getFoodsByCategoryId = async (req, res) => {
 };
 export const getFoods = async (req, res) => {
   try {
-    const { checked = [], radio = [] } = req.body;
-    const { categoryId } = req.params;
+    const { checked = [], radio = [],categoryId } = req.body;
 
     let args = {};
     if (checked.length > 0) args.categoryId = checked;
